@@ -37,7 +37,7 @@ namespace Nagaira.Template.Api.Features.Categories.Adapters.Controllers
         [HttpPut, Route("")]
         public async Task<IActionResult> Put([FromBody] CategoryDto categoryDto)
         {
-            var response = await _categoryAppService.Add(categoryDto);
+            var response = await _categoryAppService.Update(categoryDto);
             if (response.Type != TypeResponse.Ok) return BadRequest(response);
 
             return Ok(response);

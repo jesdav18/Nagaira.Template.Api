@@ -31,11 +31,14 @@ namespace Nagaira.Template.Api.Features.Categories.Application.Services
                 var existeLaversionEnBdResponse = await _categoryDomainService.CategoryExists(categoryDto.Description!);
                 if (existeLaversionEnBdResponse.Type != TypeResponse.Ok) return new Response<CategoryDto> { Type = existeLaversionEnBdResponse.Type, Message = existeLaversionEnBdResponse.Message };
 
+                category.UserRegister = "1";
                 category.Active = true;
                 category.DateRegister = DateTime.Now;
 
                 await _categoryRepository.AddAsync(category)!;
                 await _categoryRepository.SaveChangesAsync()!;
+
+                categoryDto.Id = category.Id;
 
                 return Response<CategoryDto>.Ok("¡La categoría se registró exitosamente!", categoryDto);
             }

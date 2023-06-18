@@ -14,8 +14,8 @@ namespace Nagaira.Template.Api.Infraestructure.DbContexts.Ecommerce.Maps
             builder.Property(x => x.Id).HasColumnName("id").ValueGeneratedOnAdd();
             builder.Property(x => x.Description).HasColumnName("description");
             builder.Property(x => x.Active).HasColumnName("active");
-            builder.Property(x => x.DateRegister).HasColumnName("date_register");
-            builder.Property(x => x.DateModification).HasColumnName("date_modification");
+            builder.Property(x => x.DateRegister).HasColumnName("date_register").HasColumnType("timestamp without time zone");
+            builder.Property(x => x.DateModification).HasColumnName("date_modification").HasColumnType("timestamp without time zone");
             builder.Property(x => x.UserRegister).HasColumnName("user_register");
             builder.Property(x => x.UserModification).HasColumnName("user_modification");
         }
