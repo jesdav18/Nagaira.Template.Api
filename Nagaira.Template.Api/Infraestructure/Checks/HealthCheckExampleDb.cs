@@ -6,11 +6,11 @@ using System.Data.Common;
 
 namespace Nagaira.Template.Api.Infraestructure.Checks
 {
-    public class HealthCheckEcommerceDb : IHealthCheck
+    public class HealthCheckExampleDb : IHealthCheck
     {
         private readonly string _connectionString;
 
-        public HealthCheckEcommerceDb(string connectionString)
+        public HealthCheckExampleDb(string connectionString)
         {
             _connectionString = connectionString;
         }

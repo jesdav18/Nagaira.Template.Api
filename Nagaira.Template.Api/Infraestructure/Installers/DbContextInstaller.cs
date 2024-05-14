@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Nagaira.DataLayer.Core.Extentions;
 using Nagaira.Template.Api.Infraestructure.DbContexts;
-using Nagaira.Template.Api.Infraestructure.DbContexts.Ecommerce;
+using Nagaira.Template.Api.Infraestructure.DbContexts.Example;
 using Nagaira.WebApi.Utilities.Configurations;
 
 namespace Nagaira.Template.Api.Infraestructure.Installers
@@ -10,10 +10,10 @@ namespace Nagaira.Template.Api.Infraestructure.Installers
     {
         public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<EcommerceDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("EcommerceDb")))
+            services.AddDbContext<ExampleDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("ExampleDb")))
                   .AddUnitOfWorkBuilder<UnitOfWorkType>(options =>
                   {
-                      options.AddResolver<EcommerceDbContext>(UnitOfWorkType.Ecommerce);
+                      options.AddResolver<ExampleDbContext>(UnitOfWorkType.Example);
                   });
         }
     }

@@ -10,7 +10,7 @@ namespace Nagaira.Template.Api.Infraestructure.Installers
             services.AddHealthChecks();
 
             services.AddHealthChecks()
-               .AddCheck("Chequeo EcommerceDb", new HealthCheckEcommerceDb(configuration.GetConnectionString("EcommerceDb")!));
+               .AddCheck("Chequeo ExampleDb", new HealthCheckExampleDb(configuration.GetConnectionString("ExampleDb")!));
         }
     }
 }

@@ -2,13 +2,13 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Nagaira.Template.Api.Features.Categories.Domain.Entities;
 
-namespace Nagaira.Template.Api.Infraestructure.DbContexts.Ecommerce.Maps
+namespace Nagaira.Template.Api.Infraestructure.DbContexts.Example.Maps
 {
     public class CategoryMap : IEntityTypeConfiguration<Category>
     {
         public void Configure(EntityTypeBuilder<Category> builder)
         {
-            builder.ToTable("categories", "ecommerce");
+            builder.ToTable("categories", "example");
 
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).HasColumnName("id").ValueGeneratedOnAdd();
