@@ -8,12 +8,13 @@ namespace Nagaira.Template.Api.Features.Categories.Infraestructure.Persistence
 {
     public class CategoryRepository : ICategoryRepository
     {
-        private readonly IUnitOfWork _unitOfWorkExample;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IRepository<Category> _categoryRepository;
+
         public CategoryRepository(IUnitOfWorkBuilder<UnitOfWorkType> unitOfWorkBuilder)
         {
-            _unitOfWorkExample = unitOfWorkBuilder.Build(UnitOfWorkType.Example);
-            _categoryRepository = _unitOfWorkExample.Repository<Category>();
+            _unitOfWork = unitOfWorkBuilder.Build(UnitOfWorkType.Example);
+            _categoryRepository = _unitOfWork.Repository<Category>();
         }
 
         public async Task AddAsync(Category category)
@@ -38,7 +39,7 @@ namespace Nagaira.Template.Api.Features.Categories.Infraestructure.Persistence
 
         public async Task SaveChangesAsync()
         {
-            await _unitOfWorkExample.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(Category category)

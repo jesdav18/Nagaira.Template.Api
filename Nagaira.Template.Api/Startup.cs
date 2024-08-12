@@ -1,5 +1,7 @@
-﻿using Nagaira.WebApi.Utilities.Extensions;
+﻿using Nagaira.Core.WebApi.Extensions;
+using Nagaira.WebApi.Utilities.Extensions;
 using System.Reflection;
+using static Nagaira.WebApi.Utilities.Extensions.AsemblyExtension;
 
 namespace Nagaira.Template.Api
 {
@@ -18,45 +20,36 @@ namespace Nagaira.Template.Api
 
             services.AddCors(options =>
             {
-                options.AddPolicyDiunsa("DevelopmentCors");
-                options.AddPolicyDiunsa("ProductionCors", "http://nagaira.com");
+                options.AddPolicyCors("DevelopmentCors");
+                options.AddPolicyCors("ProductionCors", "http://nagaira.com");
             });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            var assembly = Assembly.GetEntryAssembly();
-            var assemblyName = assembly?.GetName().Name;
-            var version = assembly?.GetName().Version?.ToString();
-            var corsEnvironment = "ProductionCors";
+            AssemblyInfo assembly = AsemblyExtension.GetAssemblyInfo(Assembly.GetEntryAssembly()!);
+            string corsEnvironment = "DevelopmentCors";
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 corsEnvironment = "DevelopmentCors";
-
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
                 {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{assemblyName} {version}");
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{assembly.Name} {assembly.Version}");
                 });
             }
 
             app.UseCors(corsEnvironment);
             app.UseRouting();
             app.UseAuthorization();
-            
-            app.ConfigureHealthCheck();
 
             app.UseEndpoints(endpoints =>
             {
-                var ruta = AppDomain.CurrentDomain.BaseDirectory;
-
-                endpoints.MapGet("logs", new LogEndpointHelper(ruta).HandleLogsEndpoint);
-                endpoints.MapGet("/", context => RootEndpointHelper.HandleRootEndpoint(context, env.IsProduction(), assemblyName, version));
+                endpoints.MapGet("/", context => RootEndpointHelper.HandleRootEndpoint(context, env.IsProduction(), assembly.Name!, assembly.Version!));
                 endpoints.MapControllers();
             });
-
         }
     }
 }

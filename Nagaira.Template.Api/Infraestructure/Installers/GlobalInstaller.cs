@@ -22,10 +22,10 @@ namespace Nagaira.Template.Api.Infraestructure.Installers
 
             services.AddTransient(provider =>
             {
-                var loggerHelper = new LoggerHelper(ruta);
+                LoggerHelper loggerHelper = new LoggerHelper(ruta);
 
-                var serviceProvider = services.BuildServiceProvider();
-                var lifetime = serviceProvider.GetRequiredService<IHostApplicationLifetime>();
+                ServiceProvider serviceProvider = services.BuildServiceProvider();
+                IHostApplicationLifetime lifetime = serviceProvider.GetRequiredService<IHostApplicationLifetime>();
                 lifetime.ApplicationStopping.Register(loggerHelper.Dispose);
 
                 return loggerHelper;

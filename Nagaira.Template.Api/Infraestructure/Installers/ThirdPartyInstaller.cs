@@ -1,6 +1,8 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Nagaira.Core.WebApi.Extensions;
 using Nagaira.WebApi.Utilities.Configurations;
+using Nagaira.WebApi.Utilities.Extensions;
 using System.Reflection;
+using static Nagaira.WebApi.Utilities.Extensions.AsemblyExtension;
 
 namespace Nagaira.Template.Api.Infraestructure.Installers
 {
@@ -8,36 +10,9 @@ namespace Nagaira.Template.Api.Infraestructure.Installers
     {
         public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
-            var assembly = Assembly.GetEntryAssembly();
-            var assemblyName = assembly?.GetName().Name;
-            var version = assembly?.GetName().Version?.ToString();
-
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = assemblyName, Version = version });
-
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    Description = $"Bienvenido a {assemblyName} | Ingresa un Bearer Token",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.Http,
-                    Scheme = "Bearer",
-                    BearerFormat = "JWT"
-
-                });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer" }
-                        }, new List<string>()
-                    }
-                });
-            });
+            AssemblyInfo assembly = AsemblyExtension.GetAssemblyInfo(Assembly.GetEntryAssembly()!);        
+            SwaggerConfig.ConfigureSwaggerGen(services, assembly.Name!, assembly.Version!);
+            services.AddHealthChecks();
         }
     }
 }
