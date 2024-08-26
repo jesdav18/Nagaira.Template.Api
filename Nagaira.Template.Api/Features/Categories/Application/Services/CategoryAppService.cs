@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Nagaira.Core.Extentions.Exceptions;
 using Nagaira.Core.Extentions.Responses;
 using Nagaira.Template.Api.Features.Categories.Application.Dtos;
 using Nagaira.Template.Api.Features.Categories.Application.Services.Interfaces;
@@ -23,81 +22,51 @@ namespace Nagaira.Template.Api.Features.Categories.Application.Services
         }
         public async Task<Response<CategoryDto>> Add(CategoryDto categoryDto)
         {
-            try
-            {
-                Category category = _mapper.Map<Category>(categoryDto);
+            Category category = _mapper.Map<Category>(categoryDto);
 
+            Response<bool> existeLaversionEnBdResponse = await _categoryDomainService.CategoryExists(categoryDto.Description!);
+            if (existeLaversionEnBdResponse.Type != TypeResponse.Ok) return new Response<CategoryDto> { Type = existeLaversionEnBdResponse.Type, Message = existeLaversionEnBdResponse.Message };
 
-                var existeLaversionEnBdResponse = await _categoryDomainService.CategoryExists(categoryDto.Description!);
-                if (existeLaversionEnBdResponse.Type != TypeResponse.Ok) return new Response<CategoryDto> { Type = existeLaversionEnBdResponse.Type, Message = existeLaversionEnBdResponse.Message };
+            category.UserRegister = "1";
+            category.Active = true;
+            category.DateRegister = DateTime.Now;
 
-                category.UserRegister = "1";
-                category.Active = true;
-                category.DateRegister = DateTime.Now;
+            await _categoryRepository.AddAsync(category)!;
+            await _categoryRepository.SaveChangesAsync()!;
 
-                await _categoryRepository.AddAsync(category)!;
-                await _categoryRepository.SaveChangesAsync()!;
+            categoryDto.Id = category.Id;
 
-                categoryDto.Id = category.Id;
-
-                return Response<CategoryDto>.Ok("¡La categoría se registró exitosamente!", categoryDto);
-            }
-            catch (Exception ex)
-            {
-                return Response<CategoryDto>.Exception(MessageException.ShowException(ex));
-            }
+            return Response<CategoryDto>.Ok("¡La categoría se registró exitosamente!", categoryDto);         
         }
 
         public async Task<Response> Delete(int id)
         {
-            try
-            {
-                var categoryBd = await _categoryRepository.GetCategoryById(id);
-                if (categoryBd == null) return Response.Exception($"¡La categoria con Id {id} no fue encontrada en el almacén de datos!. Por favor verifique, e intente nuevamente.");
+            Category categoryBd = await _categoryRepository.GetCategoryById(id);
+            if (categoryBd == null) return Response.Exception($"¡La categoria con Id {id} no fue encontrada en el almacén de datos!. Por favor verifique, e intente nuevamente.");
 
-                categoryBd.Active = false;
+            categoryBd.Active = false;
 
-                await _categoryRepository.SaveChangesAsync();
+            await _categoryRepository.SaveChangesAsync();
 
-                return Response.Ok("¡La categoría se eliminó exitosamente!");
-            }
-            catch (Exception ex)
-            {
-                return Response.Exception(MessageException.ShowException(ex));
-            }
+            return Response.Ok("¡La categoría se eliminó exitosamente!");          
         }
 
         public async Task<Response<List<CategoryDto>>> GetAll()
         {
-            try
-            {
-                var categories = await _categoryRepository.GetActiveCategories();
-                return Response<List<CategoryDto>>.Ok("Ok", _mapper.Map<List<CategoryDto>>(categories));
-            }
-            catch (Exception ex)
-            {
-
-                return Response<List<CategoryDto>>.Exception(MessageException.ShowException(ex));
-            }
+            List<Category> categories = await _categoryRepository.GetActiveCategories();
+            return Response<List<CategoryDto>>.Ok("Ok", _mapper.Map<List<CategoryDto>>(categories));           
         }
 
         public async Task<Response<CategoryDto>> Update(CategoryDto cateogryDto)
         {
-            try
-            {
-                var categoryBd = await _categoryRepository.GetCategoryById(cateogryDto.Id ?? 0);
-                if (categoryBd == null) return Response<CategoryDto>.Exception($"¡La categoría con Id {cateogryDto.Id} no fue encontrada en el almacén de datos!. Por favor verifique, e intente nuevamente.");
+            Category categoryBd = await _categoryRepository.GetCategoryById(cateogryDto.Id ?? 0);
+            if (categoryBd == null) return Response<CategoryDto>.Exception($"¡La categoría con Id {cateogryDto.Id} no fue encontrada en el almacén de datos!. Por favor verifique, e intente nuevamente.");
 
-                categoryBd.Description = cateogryDto.Description;
+            categoryBd.Description = cateogryDto.Description;
 
-                await _categoryRepository.SaveChangesAsync();
+            await _categoryRepository.SaveChangesAsync();
 
-                return Response<CategoryDto>.Ok("¡La categoría se actualizó exitosamente!", cateogryDto);
-            }
-            catch (Exception ex)
-            {
-                return Response<CategoryDto>.Exception(MessageException.ShowException(ex));
-            }
+            return Response<CategoryDto>.Ok("¡La categoría se actualizó exitosamente!", cateogryDto);           
         }
     }
 }
