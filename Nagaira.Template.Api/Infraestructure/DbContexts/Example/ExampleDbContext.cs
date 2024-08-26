@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Nagaira.Template.Api.Infraestructure.DbContexts.Example.Maps;
-
+using Nagaira.Template.Api.Features.Categories.Infraestructure.Maps;
 
 namespace Nagaira.Template.Api.Infraestructure.DbContexts.Example
 {

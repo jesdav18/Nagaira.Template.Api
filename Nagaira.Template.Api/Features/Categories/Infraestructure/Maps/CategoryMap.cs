@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Nagaira.Template.Api.Features.Categories.Domain.Entities;
 
-namespace Nagaira.Template.Api.Infraestructure.DbContexts.Example.Maps
+namespace Nagaira.Template.Api.Features.Categories.Infraestructure.Maps
 {
     public class CategoryMap : IEntityTypeConfiguration<Category>
     {
