@@ -16,19 +16,19 @@ namespace Nagaira.Template.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.InstallServices<Startup>(_configuration);
-
             services.AddCors(options =>
             {
-                options.AddPolicyCors("DevelopmentCors");
+                options.AddPolicyCors("DevelopmentCors", "http://localhost");
                 options.AddPolicyCors("ProductionCors", "http://nagaira.com");
             });
+
+            services.InstallServices<Startup>(_configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             AssemblyInfo assembly = AsemblyExtension.GetAssemblyInfo(Assembly.GetEntryAssembly()!);
-            string corsEnvironment = "DevelopmentCors";
+            string corsEnvironment = "ProductionCors";
 
             if (env.IsDevelopment())
             {
