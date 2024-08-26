@@ -40,7 +40,7 @@ namespace Nagaira.Template.Api
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{assembly.Name} {assembly.Version}");
                 });
             }
-
+            
             app.UseCors(corsEnvironment);
             app.UseRouting();
             app.UseAuthorization();

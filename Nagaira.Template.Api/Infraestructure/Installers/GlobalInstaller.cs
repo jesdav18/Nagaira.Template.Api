@@ -1,5 +1,6 @@
 ﻿using Nagaira.Core.WebApi;
 using Nagaira.Core.WebApi.Extensions;
+using Nagaira.Core.WebApi.Filters;
 using Nagaira.WebApi.Utilities.Configurations;
 using Nagaira.WebApi.Utilities.Extensions;
 using Newtonsoft.Json;
@@ -10,11 +11,6 @@ namespace Nagaira.Template.Api.Infraestructure.Installers
     {
         public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
-            string secretKeyEnconde = configuration.GetSection("Jwt")["Secret"]!;
-            string issuer = configuration.GetSection("Jwt")["Issuer"];
-            string audience = configuration.GetSection("Jwt")["Audience"];
-            string ruta = AppDomain.CurrentDomain.BaseDirectory;
-
             services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
@@ -22,6 +18,8 @@ namespace Nagaira.Template.Api.Infraestructure.Installers
 
             services.AddTransient(provider =>
             {
+                string ruta = AppDomain.CurrentDomain.BaseDirectory;
+
                 LoggerHelper loggerHelper = new LoggerHelper(ruta);
 
                 ServiceProvider serviceProvider = services.BuildServiceProvider();
@@ -31,18 +29,10 @@ namespace Nagaira.Template.Api.Infraestructure.Installers
                 return loggerHelper;
             });
 
-            List<JwtAuthenticationOptions> authenticationOptions = new List<JwtAuthenticationOptions>
-{
-                new JwtAuthenticationOptions
-                {
-                    SchemaName = "JwtNagaira",
-                    SecretKey = secretKeyEnconde,
-                    ValidIssuer = issuer,
-                    Audience = audience
-                }
-            };
-
-            services.AddJwtAuthentication(authenticationOptions);
+            services.AddControllers(options =>
+            {
+                options.Filters.Add<GlobalExceptionFilter>();
+            }); 
         }
     }
 }
